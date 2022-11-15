@@ -1,6 +1,7 @@
 import { EntityRepository, Repository } from 'typeorm';
 
 import Transaction from '../models/Transaction';
+// import CreateTransactionService from '../services/CreateTransactionService';
 
 interface Balance {
   income: number;
@@ -11,7 +12,22 @@ interface Balance {
 @EntityRepository(Transaction)
 class TransactionsRepository extends Repository<Transaction> {
   public async getBalance(): Promise<Balance> {
-    // TODO
+    const { income } = await this
+      .createQueryBuilder('transaction')
+      .where("transaction.type = :transactionType", { transactionType: 'income' })
+      .select('SUM(transaction.value)', 'income')
+      .getRawOne();
+    const { outcome } = await this
+      .createQueryBuilder('transaction')
+      .where("transaction.type = :transactionType", { transactionType: 'outcome' })
+      .select('SUM(transaction.value)', 'outcome')
+      .getRawOne();
+    const total = Number(income) - Number(outcome);
+    return {
+      income: Number(income),
+      outcome: Number(outcome),
+      total
+    };
   }
 }
 

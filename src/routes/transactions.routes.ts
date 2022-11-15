@@ -8,11 +8,17 @@ import { Router } from 'express';
 const transactionsRouter = Router();
 
 transactionsRouter.get('/', async (request, response) => {
-  // TODO
+  const transactionsRepository = getCustomRepository(TransactionsRepository)
+  const balance = await transactionsRepository.getBalance()
+  const transactions = await transactionsRepository.find()
+  return response.json({ transactions, balance })
 });
 
 transactionsRouter.post('/', async (request, response) => {
-  // TODO
+  const transactionInput: ICreateTransaction = request.body
+  const createTransaction = new CreateTransactionService()
+  const transaction = await createTransaction.execute(transactionInput)
+  return response.json(transaction);
 });
 
 transactionsRouter.delete('/:id', async (request, response) => {
