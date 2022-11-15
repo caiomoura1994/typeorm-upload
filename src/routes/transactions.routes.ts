@@ -1,8 +1,11 @@
 import { Router } from 'express';
+import { getCustomRepository } from 'typeorm';
+import { ICreateTransaction } from '../dtos/transactionsDTO';
+import AppError from '../errors/AppError';
 
-// import TransactionsRepository from '../repositories/TransactionsRepository';
-// import CreateTransactionService from '../services/CreateTransactionService';
-// import DeleteTransactionService from '../services/DeleteTransactionService';
+import TransactionsRepository from '../repositories/TransactionsRepository';
+import CreateTransactionService from '../services/CreateTransactionService';
+import DeleteTransactionService from '../services/DeleteTransactionService';
 // import ImportTransactionsService from '../services/ImportTransactionsService';
 
 const transactionsRouter = Router();
@@ -22,11 +25,13 @@ transactionsRouter.post('/', async (request, response) => {
 });
 
 transactionsRouter.delete('/:id', async (request, response) => {
-  // TODO
+  const { id } = request.params
+  const createTransaction = new DeleteTransactionService()
+  await createTransaction.execute(id as string)
+  return response.status(204).send();
 });
 
 transactionsRouter.post('/import', async (request, response) => {
-  // TODO
 });
 
 export default transactionsRouter;
